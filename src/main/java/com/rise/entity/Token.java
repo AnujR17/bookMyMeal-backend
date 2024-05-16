@@ -18,6 +18,8 @@ import java.util.UUID;
 public class Token {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long tokenId;
+
     private Long mealId;
     private UUID token;
 }

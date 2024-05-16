@@ -10,21 +10,17 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
-
-
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class MealBooking {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long mealId;
 
     private Long userId;
     private LocalDate startDate;
     private LocalDate endDate;
-    private boolean isActive;
-    private String token;
+    private Boolean canceled;
 }
