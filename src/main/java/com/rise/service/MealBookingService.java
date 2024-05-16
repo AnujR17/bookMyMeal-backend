@@ -22,24 +22,34 @@ public class MealBookingService {
     private TokenRepository tokenRepository;
 
     public List<MealBooking> bookMultipleDays(Long userId, LocalDate startDate, LocalDate endDate) {
-        List<MealBooking> bookings = new ArrayList<>();
+        List<MealBooking> bookedMeals = new ArrayList<>();
         LocalDate currentDate = startDate;
-        while (currentDate.isBefore(endDate.plusDays(1))) {
-            MealBooking booking = new MealBooking();
-            booking.setUserId(userId);
-            booking.setStartDate(currentDate);
-            booking.setEndDate(currentDate);
-            MealBooking savedBooking = bookingRepository.save(booking);
-            bookings.add(savedBooking);
+
+        while (!currentDate.isAfter(endDate)) {
+            MealBooking mealBooking = new MealBooking();
+            mealBooking.setUserId(userId);
+            mealBooking.setStartDate(currentDate);
+            mealBooking.setEndDate(currentDate);
+            UUID token = UUID.randomUUID();
+            mealBooking.setToken(token);
+            MealBooking savedMealBooking = bookingRepository.save(mealBooking);
+
+            Token tokenEntity = new Token();
+            tokenEntity.setMealId(savedMealBooking.getMealId());
+            tokenEntity.setToken(token);
+            tokenRepository.save(tokenEntity);
+
+            bookedMeals.add(savedMealBooking);
             currentDate = currentDate.plusDays(1);
         }
-        return bookings;
+
+        return bookedMeals;
     }
 
-    public void cancelBooking(Long bookingId) {
-        MealBooking booking = bookingRepository.findById(bookingId).orElseThrow(() -> new RuntimeException("Booking not found"));
-        booking.setCanceled(true);
-        bookingRepository.save(booking);
+    public void cancelMeal(Long mealId) {
+        MealBooking mealBooking = bookingRepository.findById(mealId).orElseThrow(() -> new RuntimeException("Meal booking not found"));
+        mealBooking.setCanceled(true);
+        bookingRepository.save(mealBooking);
     }
 
     public List<MealBooking> getBookingsByUser(Long userId) {

@@ -1,14 +1,12 @@
 package com.rise.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Entity
 @Data
@@ -23,4 +21,5 @@ public class MealBooking {
     private LocalDate startDate;
     private LocalDate endDate;
     private Boolean canceled;
+    private UUID token;
 }
