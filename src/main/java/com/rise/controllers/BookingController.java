@@ -1,15 +1,14 @@
 package com.rise.controllers;
 
-import com.rise.entity.Meal;
+import com.rise.dto.BookingRequest;
 import com.rise.entity.MealBooking;
 import com.rise.service.MealBookingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
+
 
 @RestController
 @RequestMapping("/api/bookings")
@@ -18,20 +17,15 @@ public class BookingController {
     private MealBookingService bookingService;
 
     @PostMapping
-    public ResponseEntity<List<MealBooking>> bookMultipleDays(@RequestBody Map<String, Object> requestData) {
-        Long userId = Long.valueOf(requestData.get("userId").toString());
-        LocalDate startDate = LocalDate.parse(requestData.get("startDate").toString());
-        LocalDate endDate = LocalDate.parse(requestData.get("endDate").toString());
-
-        List<MealBooking> bookedBookings = bookingService.bookMultipleDays(userId, startDate, endDate);
-        return ResponseEntity.ok(bookedBookings);
+    public ResponseEntity<List<MealBooking>> bookMultipleDays(@RequestBody BookingRequest bookingRequest) {
+        List<MealBooking> bookedMeals = bookingService.bookMultipleDays(bookingRequest.getUserId(), bookingRequest.getStartDate(), bookingRequest.getEndDate());
+        return ResponseEntity.ok(bookedMeals);
     }
 
-
-    @DeleteMapping("/{bookingId}")
-    public ResponseEntity<String> cancelBooking(@PathVariable Long bookingId) {
-        bookingService.cancelBooking(bookingId);
-        return ResponseEntity.ok("Booking canceled successfully");
+    @DeleteMapping("/{mealId}")
+    public ResponseEntity<String> cancelMeal(@PathVariable Long mealId) {
+        bookingService.cancelMeal(mealId);
+        return ResponseEntity.ok("Meal booking canceled successfully");
     }
 
     @GetMapping("/{userId}")
