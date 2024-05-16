@@ -7,24 +7,17 @@ import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
-import java.time.LocalDate;
-
-
+import java.util.UUID;
 
 @Entity
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class MealBooking {
-
+@NoArgsConstructor
+public class Token {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    private Long userId;
-    private LocalDate startDate;
-    private LocalDate endDate;
-    private boolean isActive;
-    private String token;
+    private Long mealId;
+    private UUID token;
 }

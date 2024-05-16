@@ -9,22 +9,19 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-
-
+import java.util.UUID;
 
 @Entity
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class MealBooking {
-
+@NoArgsConstructor
+public class Meal {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long mealId;
 
     private Long userId;
-    private LocalDate startDate;
-    private LocalDate endDate;
-    private boolean isActive;
-    private String token;
+    private UUID token;
+    private LocalDate date;
+    private boolean canceled;
 }
