@@ -1,7 +1,8 @@
 package com.rise.repository;
 
-import com.MEALPROJECT.MEAL_PROJECT1.entities.ForgotPassword;
-import com.MEALPROJECT.MEAL_PROJECT1.entities.User;
+
+import com.rise.entity.ForgotPassword;
+import com.rise.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

@@ -1,10 +1,10 @@
 package com.rise.service.auth;
 
-import com.MEALPROJECT.MEAL_PROJECT1.dtos.SignupRequest;
-import com.MEALPROJECT.MEAL_PROJECT1.dtos.UserDto;
-import com.MEALPROJECT.MEAL_PROJECT1.entities.User;
-import com.MEALPROJECT.MEAL_PROJECT1.enums.UserRole;
-import com.MEALPROJECT.MEAL_PROJECT1.repositories.UserRepository;
+import com.rise.dto.SignupRequest;
+import com.rise.dto.UserDto;
+import com.rise.entity.User;
+import com.rise.enums.UserRole;
+import com.rise.repository.UserRepository;
 import jakarta.annotation.PostConstruct;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;

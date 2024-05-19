@@ -1,7 +1,8 @@
 package com.rise.service.auth.jwt;
 
 
-import com.MEALPROJECT.MEAL_PROJECT1.repositories.UserRepository;
+
+import com.rise.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
