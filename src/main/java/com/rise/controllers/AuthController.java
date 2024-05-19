@@ -1,14 +1,15 @@
 package com.rise.controllers;
 
-import com.MEALPROJECT.MEAL_PROJECT1.Util.JwtUtil;
-import com.MEALPROJECT.MEAL_PROJECT1.dtos.AuthenticationRequest;
-import com.MEALPROJECT.MEAL_PROJECT1.dtos.AuthenticationResponse;
-import com.MEALPROJECT.MEAL_PROJECT1.dtos.SignupRequest;
-import com.MEALPROJECT.MEAL_PROJECT1.dtos.UserDto;
-import com.MEALPROJECT.MEAL_PROJECT1.entities.User;
-import com.MEALPROJECT.MEAL_PROJECT1.repositories.UserRepository;
-import com.MEALPROJECT.MEAL_PROJECT1.services.auth.AuthService;
-import com.MEALPROJECT.MEAL_PROJECT1.services.auth.jwt.UserDetailsServiceImpl;
+
+import com.rise.dto.AuthenticationRequest;
+import com.rise.dto.AuthenticationResponse;
+import com.rise.entity.User;
+import com.rise.Util.JwtUtil;
+import com.rise.dto.SignupRequest;
+import com.rise.dto.UserDto;
+import com.rise.repository.UserRepository;
+import com.rise.service.auth.AuthService;
+import com.rise.service.auth.jwt.UserDetailsServiceImpl;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+//import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 

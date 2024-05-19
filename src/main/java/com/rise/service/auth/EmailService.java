@@ -1,6 +1,6 @@
 package com.rise.service.auth;
 
-import com.MEALPROJECT.MEAL_PROJECT1.dtos.MailBody;
+import com.rise.dto.MailBody;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;

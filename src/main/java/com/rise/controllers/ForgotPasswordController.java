@@ -129,15 +129,17 @@ package com.rise.controllers;
 //}
 
 
-import com.MEALPROJECT.MEAL_PROJECT1.Util.ChangePassword;
-import com.MEALPROJECT.MEAL_PROJECT1.dtos.MailBody;
-import com.MEALPROJECT.MEAL_PROJECT1.entities.ForgotPassword;
-import com.MEALPROJECT.MEAL_PROJECT1.entities.User;
-import com.MEALPROJECT.MEAL_PROJECT1.repositories.ForgotPasswordRepository;
-import com.MEALPROJECT.MEAL_PROJECT1.repositories.UserRepository;
-import com.MEALPROJECT.MEAL_PROJECT1.services.auth.EmailService;
+
+import com.rise.Util.ChangePassword;
+import com.rise.dto.MailBody;
+import com.rise.entity.ForgotPassword;
+import com.rise.repository.ForgotPasswordRepository;
+import com.rise.repository.UserRepository;
+import com.rise.service.auth.EmailService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import com.rise.entity.User;
+//import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -174,7 +176,7 @@ public class ForgotPasswordController {
 //        User user = userRepository.findByEmail(email)
 //                .orElseThrow(() -> new UsernameNotFoundException("Please provide an valid email!" + email));
 
-        Optional<User> userOptional = Optional.ofNullable(userRepository.findByEmail(email));
+        Optional<com.rise.entity.User> userOptional = Optional.ofNullable(userRepository.findByEmail(email));
         User user = userOptional.orElseThrow(() -> new UsernameNotFoundException("Please provide a valid email!"));
 
         int otp = otpGenerator();

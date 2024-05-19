@@ -1,7 +1,8 @@
 package com.rise.repository;
 
-import com.MEALPROJECT.MEAL_PROJECT1.entities.User;
-import com.MEALPROJECT.MEAL_PROJECT1.enums.UserRole;
+
+import com.rise.entity.User;
+import com.rise.enums.UserRole;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;

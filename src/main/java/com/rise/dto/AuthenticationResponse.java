@@ -1,6 +1,7 @@
 package com.rise.dto;
 
-import com.MEALPROJECT.MEAL_PROJECT1.enums.UserRole;
+
+import com.rise.enums.UserRole;
 import lombok.Data;
 
 @Data
