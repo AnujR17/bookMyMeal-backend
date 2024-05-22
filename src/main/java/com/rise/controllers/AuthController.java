@@ -79,15 +79,13 @@ public class AuthController {
     @PostMapping("/login")
     public AuthenticationResponse createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest, HttpServletResponse response) throws IOException {
         try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken((authenticationRequest.getEmail()), authenticationRequest.getPassword()));
-
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getEmail(), authenticationRequest.getPassword()));
         } catch (BadCredentialsException e) {
-            throw new BadCredentialsException("Incorrrect username or password");
+            throw new BadCredentialsException("Incorrect username or password");
         } catch (DisabledException disabledException) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND, "User not active");
             return null;
         }
-
 
         final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getEmail());
         final String jwt = jwtUtil.generateToken(userDetails);
@@ -95,12 +93,12 @@ public class AuthController {
         AuthenticationResponse authenticationResponse = new AuthenticationResponse();
         if (optionalUser.isPresent()) {
             authenticationResponse.setJwt(jwt);
-            authenticationResponse.setUserRole(optionalUser.get().getUserRole());
+            authenticationResponse.setName(optionalUser.get().getName()); // Set user's name instead of user role
             authenticationResponse.setUserId(optionalUser.get().getId());
-
         }
         return authenticationResponse;
     }
+
 
 
 }
