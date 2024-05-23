@@ -10,7 +10,6 @@ import com.rise.entity.User;
 import com.rise.repository.UserRepository;
 import com.rise.service.auth.AuthService;
 import com.rise.service.auth.jwt.UserDetailsServiceImpl;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,16 +17,14 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
-import java.util.Map;
+
 import java.util.Optional;
 
 import static org.springframework.http.HttpStatus.*;
 
-@CrossOrigin("*")
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
@@ -41,9 +38,6 @@ public class AuthController {
     private final JwtUtil jwtUtil;
 
     private final UserRepository userRepository;
-
-//    private final ForgotPasswordService forgotPasswordService;
-
 
     public AuthController(AuthService authService, UserDetailsServiceImpl userDetailsService, AuthenticationManager authenticationManager, JwtUtil jwtUtil, UserRepository userRepository) {
         this.authService = authService;
@@ -61,7 +55,7 @@ public class AuthController {
         }
 
         //username already exists
-        Optional<User> existingUser = Optional.ofNullable(userRepository.findByEmail(signupRequest.getEmail()));
+        Optional<User> existingUser = userRepository.findByEmail(signupRequest.getEmail());
         if (existingUser.isPresent()) {
             return new ResponseEntity<>("Username already exists", HttpStatus.BAD_REQUEST);
         }
@@ -89,7 +83,7 @@ public class AuthController {
 
         final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getEmail());
         final String jwt = jwtUtil.generateToken(userDetails);
-        Optional<User> optionalUser = Optional.ofNullable(userRepository.findByEmail(userDetails.getUsername()));
+        Optional<User> optionalUser = userRepository.findByEmail(userDetails.getUsername());
         if (optionalUser.isPresent()) {
             AuthenticationResponse authenticationResponse = new AuthenticationResponse();
             authenticationResponse.setJwt(jwt);
