@@ -36,8 +36,9 @@
 
 package com.rise.service.auth.jwt;
 
+import com.MEALPROJECT.MEAL_PROJECT1.repositories.UserRepository;
 
-import com.rise.repository.UserRepository;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -56,7 +57,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Optional<com.rise.entity.User> optionalUser = userRepository.findFirstByEmail(email);
+        Optional<com.MEALPROJECT.MEAL_PROJECT1.entities.User> optionalUser = userRepository.findByEmail(email);
         if (optionalUser.isEmpty()) {
             throw new UsernameNotFoundException("User Not Found");
         }

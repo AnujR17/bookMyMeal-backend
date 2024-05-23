@@ -1,12 +1,12 @@
 package com.rise.controllers;
 
 
+import com.rise.Util.JwtUtil;
 import com.rise.dto.AuthenticationRequest;
 import com.rise.dto.AuthenticationResponse;
-import com.rise.entity.User;
-import com.rise.Util.JwtUtil;
 import com.rise.dto.SignupRequest;
 import com.rise.dto.UserDto;
+import com.rise.entity.User;
 import com.rise.repository.UserRepository;
 import com.rise.service.auth.AuthService;
 import com.rise.service.auth.jwt.UserDetailsServiceImpl;
@@ -17,14 +17,15 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-//import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.Optional;
 
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.*;
 
 @CrossOrigin("*")
 @RestController
@@ -60,7 +61,7 @@ public class AuthController {
         }
 
         //username already exists
-        Optional<User> existingUser = userRepository.findFirstByEmail(signupRequest.getEmail());
+        Optional<User> existingUser = Optional.ofNullable(userRepository.findByEmail(signupRequest.getEmail()));
         if (existingUser.isPresent()) {
             return new ResponseEntity<>("Username already exists", HttpStatus.BAD_REQUEST);
         }
@@ -77,25 +78,27 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public AuthenticationResponse createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest, HttpServletResponse response) throws IOException {
+    public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getEmail(), authenticationRequest.getPassword()));
         } catch (BadCredentialsException e) {
-            throw new BadCredentialsException("Incorrect username or password");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Incorrect username or password");
         } catch (DisabledException disabledException) {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND, "User not active");
-            return null;
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("User account is disabled");
         }
 
         final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getEmail());
         final String jwt = jwtUtil.generateToken(userDetails);
-        Optional<User> optionalUser = userRepository.findFirstByEmail(userDetails.getUsername());
-        AuthenticationResponse authenticationResponse = new AuthenticationResponse();
+        Optional<User> optionalUser = Optional.ofNullable(userRepository.findByEmail(userDetails.getUsername()));
         if (optionalUser.isPresent()) {
+            AuthenticationResponse authenticationResponse = new AuthenticationResponse();
             authenticationResponse.setJwt(jwt);
-            authenticationResponse.setName(optionalUser.get().getName()); 
+            authenticationResponse.setName(optionalUser.get().getName());
+            authenticationResponse.setUserId(optionalUser.get().getId());
+            return ResponseEntity.ok(authenticationResponse);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
         }
-        return authenticationResponse;
     }
 
 
