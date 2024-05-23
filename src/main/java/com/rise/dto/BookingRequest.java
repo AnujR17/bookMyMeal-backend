@@ -13,7 +13,4 @@ public class BookingRequest {
     private Long userId;
     private LocalDate startDate;
     private LocalDate endDate;
-    private double price;
-
-
 }

@@ -11,7 +11,7 @@
     import java.time.LocalDate;
     import java.util.List;
 
-
+    @CrossOrigin("*")
     @RestController
     @RequestMapping("/api/meals")
     public class MealController {

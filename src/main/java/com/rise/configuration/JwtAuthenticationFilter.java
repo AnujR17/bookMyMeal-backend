@@ -1,6 +1,5 @@
 package com.rise.configuration;
 
-
 import com.rise.Util.JwtUtil;
 import com.rise.service.auth.jwt.UserService;
 import jakarta.servlet.FilterChain;
@@ -19,38 +18,45 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
     private final UserService userService;
 
-
     @Override
-    protected void doFilterInternal(@NonNull HttpServletRequest request,@NonNull HttpServletResponse response,@NonNull FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {
         final String authHeader = request.getHeader("Authorization");
         final String jwt;
         final String userEmail;
-        if(StringUtils.isEmpty(authHeader) || !StringUtils.startsWith(authHeader,"Bearer")){
-       filterChain.doFilter(request,response);
-       return;
+
+        if (StringUtils.isEmpty(authHeader) || !StringUtils.startsWith(authHeader, "Bearer ")) {
+            filterChain.doFilter(request, response);
+            return;
         }
+
         jwt = authHeader.substring(7);
         userEmail = jwtUtil.extractUserName(jwt);
-        if(StringUtils.isNotEmpty(userEmail)
-            && SecurityContextHolder.getContext().getAuthentication()== null){
+
+        if (StringUtils.isNotEmpty(userEmail) && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = userService.UserDetailsService().loadUserByUsername(userEmail);
-            if(jwtUtil.isTokenValid(jwt,userDetails)){
+
+            if (jwtUtil.isTokenValid(jwt, userDetails)) {
                 SecurityContext context = SecurityContextHolder.createEmptyContext();
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                        userDetails,null,userDetails.getAuthorities());
+                        userDetails, null, userDetails.getAuthorities());
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 context.setAuthentication(authToken);
                 SecurityContextHolder.setContext(context);
-
+            } else {
+                // Handle invalid token
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.getWriter().write("Invalid token");
+                return;
             }
         }
-        filterChain.doFilter(request,response);
 
+        filterChain.doFilter(request, response);
     }
 }
