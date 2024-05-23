@@ -1,6 +1,7 @@
 package com.rise.configuration;
 
 
+
 import com.rise.enums.UserRole;
 import com.rise.service.auth.jwt.UserService;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -26,37 +28,33 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class WebSecurityConfiguration {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-
-    private  final UserService userService;
-
+    private final UserService userService;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(request-> request.requestMatchers("/api/auth/**")
-                .permitAll()
-                        .requestMatchers("/api/admin/**","/forgotPassword/**").hasAnyAuthority(UserRole.ADMIN.name())
-
-                .anyRequest().authenticated())
+                .authorizeHttpRequests(request -> request.requestMatchers("/api/auth/**", "/forgotPassword/**")
+                        .permitAll()
+                        .requestMatchers("/api/admin/**").hasAnyAuthority(UserRole.ADMIN.name())
+                        .anyRequest().authenticated())
                 .sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-        .authenticationProvider(authenticationProvider()).addFilterBefore(
-            jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
- return http.build();
+                .authenticationProvider(authenticationProvider())
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
     }
 
-    public AuthenticationProvider authenticationProvider(){
-        DaoAuthenticationProvider provider =new DaoAuthenticationProvider();
+    public AuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setUserDetailsService(userService.UserDetailsService());
         provider.setPasswordEncoder(passwordEncoder());
         return provider;
-
     }
 
-
-
     @Bean
-    public PasswordEncoder passwordEncoder(){return new BCryptPasswordEncoder();
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 
     @Bean

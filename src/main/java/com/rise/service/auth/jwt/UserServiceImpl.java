@@ -1,8 +1,7 @@
 package com.rise.service.auth.jwt;
 
 
-
-import com.rise.repository.UserRepository;
+import com.MEALPROJECT.MEAL_PROJECT1.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -20,10 +19,15 @@ private final UserRepository userRepository;
         return new UserDetailsService() {
             @Override
             public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-                return userRepository.findFirstByEmail(username)
+                return userRepository.findByEmail(username)
                         .orElseThrow(() -> new UsernameNotFoundException("user not found"));
             }
         };
+    }
+
+    @Override
+    public UserDetailsService userDetailsService() {
+        return null;
     }
 
 

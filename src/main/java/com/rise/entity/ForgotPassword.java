@@ -24,8 +24,18 @@ public class ForgotPassword {
     @Column(nullable = false)
     private Date expirationTime;
 
+    //    @OneToOne
+//    @JoinColumn(name = "user_id", unique = true)
     @OneToOne
     private User user;
 
 
+    public void setOtp(int otp) {
+        this.otp = otp;
+    }
+
+
+    public void setExpirationTime(Date expirationTime) {
+        this.expirationTime = expirationTime;
+    }
 }
