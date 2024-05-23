@@ -20,6 +20,7 @@ public class MealBooking {
     private Long userId;
     private LocalDate startDate;
     private LocalDate endDate;
+    private LocalDate date;
     private Boolean canceled;
     private UUID token;
 }
