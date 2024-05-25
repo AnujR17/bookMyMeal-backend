@@ -24,5 +24,9 @@ public class Notification {
     private LocalDateTime createdAt;
 
     public Notification(String userId, String userName, String message, LocalDateTime now) {
+        this.userId = userId;
+        this.userName = userName;
+        this.message = message;
+        this.createdAt = now;
     }
 }
