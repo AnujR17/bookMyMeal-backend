@@ -1,6 +1,4 @@
-
 package com.rise.controllers;
-
 
 import com.rise.dto.MailBody;
 import com.rise.entity.ForgotPassword;
@@ -17,17 +15,14 @@ import org.springframework.web.bind.annotation.*;
 import java.time.Instant;
 import java.util.*;
 
-@CrossOrigin("*")
+@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 @RestController
 @RequestMapping("/forgotPassword")
 public class ForgotPasswordController {
 
     private final UserRepository userRepository;
-
     private final EmailService emailService;
-
     private final ForgotPasswordRepository forgotPasswordRepository;
-
     private final PasswordEncoder passwordEncoder;
 
     public ForgotPasswordController(UserRepository userRepository, EmailService emailService, ForgotPasswordRepository forgotPasswordRepository, PasswordEncoder passwordEncoder) {
@@ -36,6 +31,7 @@ public class ForgotPasswordController {
         this.forgotPasswordRepository = forgotPasswordRepository;
         this.passwordEncoder = passwordEncoder;
     }
+
     @PostMapping("/verifyMail")
     public ResponseEntity<String> verifyEmail(@RequestBody Map<String, String> requestBody) {
         String email = requestBody.get("email");
@@ -56,11 +52,11 @@ public class ForgotPasswordController {
         // If exists, update OTP and expiration time
         if (existingForgotPassword != null) {
             existingForgotPassword.setOtp(otp);
-            existingForgotPassword.setExpirationTime(new Date(System.currentTimeMillis() + 70 * 1000));
+            existingForgotPassword.setExpirationTime(new Date(System.currentTimeMillis() + 300 * 1000));
         } else { // Otherwise, create a new ForgotPassword entity
             existingForgotPassword = ForgotPassword.builder()
                     .otp(otp)
-                    .expirationTime(new Date(System.currentTimeMillis() + 70 * 1000))
+                    .expirationTime(new Date(System.currentTimeMillis() + 300 * 1000))
                     .user(user)
                     .build();
         }
@@ -71,9 +67,6 @@ public class ForgotPasswordController {
         return ResponseEntity.ok("Email sent for verification!");
     }
 
-
-
-    //otp
     @PostMapping("/verifyOtp")
     public ResponseEntity<String> verifyOtp(@RequestBody Map<String, String> requestBody) {
         String email = requestBody.get("email");
@@ -104,16 +97,20 @@ public class ForgotPasswordController {
         }
 
         String encodedPassword = passwordEncoder.encode(password);
-        userRepository.updatePassword(email, encodedPassword);
+
+        // Find the user by email
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found!"));
+
+        // Update the user's password
+        user.setPassword(encodedPassword);
+        userRepository.save(user);
 
         return ResponseEntity.ok("Password has been changed!");
     }
-
-
 
     private Integer otpGenerator() {
         Random random = new Random();
         return random.nextInt(100_000, 999_999);
     }
 }
-
