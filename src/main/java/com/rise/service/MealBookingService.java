@@ -52,8 +52,9 @@ public class MealBookingService {
     public void cancelMeal(Long mealId) {
         MealBooking mealBooking = mealBookingRepository.findById(mealId)
                 .orElseThrow(() -> new RuntimeException("Meal not found"));
-        mealBooking.setCanceled(true);
-        mealBookingRepository.save(mealBooking);
+
+        // Delete the meal booking from the repository
+        mealBookingRepository.delete(mealBooking);
     }
 
     public List<MealBooking> getBookingsByUser(Long userId) {
