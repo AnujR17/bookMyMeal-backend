@@ -28,6 +28,17 @@ public class NotificationService {
         notificationRepository.save(notification);
     }
 
+    public void createCancellationNotification(String userId, String userName, LocalDate startDate) {
+        String message = "Your booking has been canceled for " + startDate + ".";
+        Notification notification = new Notification(
+                userId,
+                userName,
+                message,
+                LocalDateTime.now()
+        );
+        notificationRepository.save(notification);
+    }
+
     public List<Notification> getAllNotifications(String userId) {
         return notificationRepository.findByUserId(userId);
     }

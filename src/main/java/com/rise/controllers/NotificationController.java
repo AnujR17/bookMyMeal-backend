@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -15,15 +16,21 @@ import java.util.logging.Logger;
 @RestController
 @RequestMapping("/api/notifications")
 public class NotificationController {
+
     @Autowired
     private NotificationService notificationService;
 
     private static final Logger logger = Logger.getLogger(NotificationController.class.getName());
 
     @PostMapping
-    public ResponseEntity<Void> createNotification(@RequestBody NotificationDTO notificationDTO) {
+    public ResponseEntity<Void> createNotification(@RequestBody NotificationDTO notificationDTO, @RequestParam(required = false) String notificationType) {
         logger.info("Received request to create notification: " + notificationDTO);
-        notificationService.createNotification(notificationDTO);
+        if (notificationType != null && notificationType.equals("cancellation")) {
+            notificationService.createCancellationNotification(notificationDTO.getUserId(), notificationDTO.getUserName(), notificationDTO.getStartDate());
+        } else {
+            // Create a booking notification
+            notificationService.createNotification(notificationDTO);
+        }
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
