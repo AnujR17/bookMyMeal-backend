@@ -1,11 +1,11 @@
 package com.rise.entity;
 
-
 import com.rise.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,19 +21,15 @@ public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private  Long id;
+    private Long id;
     private String name;
-
     private String email;
-
+    @Setter
     private String password;
-
     private UserRole userRole;
 
     @OneToOne(mappedBy = "user")
     private ForgotPassword forgotPassword;
-
-
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -65,5 +61,3 @@ public class User implements UserDetails {
         return true;
     }
 }
-
-

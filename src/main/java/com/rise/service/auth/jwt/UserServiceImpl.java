@@ -1,7 +1,5 @@
 package com.rise.service.auth.jwt;
 
-
-
 import com.rise.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -30,6 +28,4 @@ private final UserRepository userRepository;
     public UserDetailsService userDetailsService() {
         return null;
     }
-
-
 }
