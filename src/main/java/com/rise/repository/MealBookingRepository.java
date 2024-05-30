@@ -9,5 +9,7 @@ import java.util.List;
 public interface MealBookingRepository extends JpaRepository<MealBooking, Long> {
     List<MealBooking> findByUserId(Long userId);
     boolean existsByUserIdAndDate(Long userId, LocalDate date);
+    List<MealBooking> findByUserIdAndIsRedeemed(Long userId, boolean isRedeemed);
+
 
 }

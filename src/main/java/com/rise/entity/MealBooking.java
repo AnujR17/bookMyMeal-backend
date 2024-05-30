@@ -22,5 +22,6 @@ public class MealBooking {
     private LocalDate endDate;
     private LocalDate date;
     private Boolean canceled;
+    private Boolean isRedeemed;
     private UUID token;
 }
