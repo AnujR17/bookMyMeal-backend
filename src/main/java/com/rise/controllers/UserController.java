@@ -8,8 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-@CrossOrigin("*")
 
+@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 @RequestMapping("/api/change-password")
 @RestController
 public class UserController {
@@ -24,12 +24,12 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<String> changePassword(@RequestBody ChangePasswordRequest request) {
-        String name = request.getName();
+        Long id = request.getId();
         String currentPassword = request.getCurrentPassword();
         String newPassword = request.getNewPassword();
 
-        // Find the user by username
-        User user = userRepository.findByName(name);
+        // Find the user by userId
+        User user = userRepository.findById(id).orElse(null);
         if (user == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
         }
