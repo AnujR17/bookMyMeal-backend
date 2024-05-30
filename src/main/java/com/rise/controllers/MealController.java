@@ -41,4 +41,10 @@ public class MealController {
         mealBookingService.cancelMeal(mealId);
         return ResponseEntity.ok("Meal canceled successfully");
     }
+
+    @PutMapping("/redeem/{mealId}")
+    public ResponseEntity<String> redeemMeal(@PathVariable Long mealId) {
+        mealBookingService.redeemMeal(mealId);
+        return ResponseEntity.ok("Meal redeemed successfully");
+    }
 }
