@@ -53,4 +53,10 @@ public class BookingController {
         List<MealBooking> allBookings = bookingService.getAllBookings();
         return ResponseEntity.ok(allBookings);
     }
+
+    @GetMapping("/meal/{mealId}")
+    public MealBooking getMealById(@PathVariable Long mealId) {
+        return bookingService.getMealById(mealId);
+    }
 }
+
