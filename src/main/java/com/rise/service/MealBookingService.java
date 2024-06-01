@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -27,16 +28,22 @@ public class MealBookingService {
     );
 
     public List<MealBooking> bookMultipleDays(Long userId, LocalDate startDate, LocalDate endDate) {
-        if (startDate.isBefore(LocalDate.now())) {
-            throw new IllegalArgumentException("Cannot book meals for past dates.");
+        LocalDate today = LocalDate.now();
+
+        if (startDate.isBefore(today.plusDays(1))) {
+            throw new IllegalArgumentException("Start date must be at least tomorrow.");
         }
 
         LocalTime cutoffTime = LocalTime.of(20, 0); // 8 PM cutoff time
-        LocalDate today = LocalDate.now();
         LocalTime now = LocalTime.now();
 
-        if ((startDate.isBefore(today) && !startDate.equals(today)) || (startDate.equals(today) && now.isAfter(cutoffTime))) {
+        if ((startDate.equals(today) && now.isAfter(cutoffTime))) {
             throw new IllegalArgumentException("Cannot book meals for past dates or after 8 PM for today.");
+        }
+
+        long daysBetween = ChronoUnit.DAYS.between(startDate, endDate);
+        if (daysBetween > 90) {
+            throw new IllegalArgumentException("Cannot book meals for more than 90 days.");
         }
 
         List<MealBooking> bookedMeals = new ArrayList<>();
@@ -48,7 +55,7 @@ public class MealBookingService {
                 mealBooking.setUserId(userId);
                 mealBooking.setStartDate(startDate);
                 mealBooking.setEndDate(endDate);
-                mealBooking.setToken(UUID.fromString(UUID.randomUUID().toString())); // Generate unique token for each booking
+                mealBooking.setToken(UUID.randomUUID()); // Generate unique token for each booking
                 mealBooking.setDate(date); // Set the date for this specific booking
                 bookedMeals.add(mealBookingRepository.save(mealBooking));
             }
@@ -90,6 +97,7 @@ public class MealBookingService {
     private boolean isAlreadyBooked(Long userId, LocalDate date) {
         return mealBookingRepository.existsByUserIdAndDate(userId, date);
     }
+
     public void redeemMeal(Long mealId) {
         MealBooking mealBooking = mealBookingRepository.findById(mealId)
                 .orElseThrow(() -> new RuntimeException("Meal not found"));
@@ -97,4 +105,8 @@ public class MealBookingService {
         mealBookingRepository.save(mealBooking);
     }
 
+    public MealBooking getMealById(Long mealId) {
+        return mealBookingRepository.findById(mealId)
+                .orElseThrow(() -> new RuntimeException("Meal not found"));
+    }
 }
