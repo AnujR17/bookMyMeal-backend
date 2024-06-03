@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -20,11 +21,13 @@ public class MealBookingService {
     @Autowired
     private MealBookingRepository mealBookingRepository;
 
-    // Define your holidays here
+    // Defined holidays
     private static final Set<LocalDate> holidays = Set.of(
-            LocalDate.of(2024, 1, 1),  // New Year's Day
-            LocalDate.of(2024, 12, 25) // Christmas
-            // Add more holidays as needed
+            LocalDate.of(2024, 1, 1),
+            LocalDate.of(2024, 12, 25),
+            LocalDate.of(2024, 6, 17),
+            LocalDate.of(2024,8,15)
+
     );
 
     public List<MealBooking> bookMultipleDays(Long userId, LocalDate startDate, LocalDate endDate) {
@@ -34,7 +37,7 @@ public class MealBookingService {
             throw new IllegalArgumentException("Start date must be at least tomorrow.");
         }
 
-        LocalTime cutoffTime = LocalTime.of(20, 0); // 8 PM cutoff time
+        LocalTime cutoffTime = LocalTime.of(20, 0); // 8 PM deadline for quick booking
         LocalTime now = LocalTime.now();
 
         if ((startDate.equals(today) && now.isAfter(cutoffTime))) {
@@ -55,8 +58,8 @@ public class MealBookingService {
                 mealBooking.setUserId(userId);
                 mealBooking.setStartDate(startDate);
                 mealBooking.setEndDate(endDate);
-                mealBooking.setToken(UUID.randomUUID()); // Generate unique token for each booking
-                mealBooking.setDate(date); // Set the date for this specific booking
+                mealBooking.setToken(UUID.randomUUID()); // Generating unique token for each booking
+                mealBooking.setDate(date);
                 bookedMeals.add(mealBookingRepository.save(mealBooking));
             }
             date = date.plusDays(1);
@@ -66,12 +69,22 @@ public class MealBookingService {
     }
 
     public void cancelMeal(Long mealId) {
-        MealBooking mealBooking = mealBookingRepository.findById(mealId)
+        LocalDate bookingDate = mealBookingRepository.findById(mealId)
+                .map(MealBooking::getDate)
                 .orElseThrow(() -> new RuntimeException("Meal not found"));
 
-        // Delete the meal booking from the repository
-        mealBookingRepository.delete(mealBooking);
+        // 10 pm deadline for cancellation
+        LocalDateTime deadline = LocalDateTime.of(bookingDate.minusDays(1), LocalTime.of(22, 00));
+        if (LocalDateTime.now().isBefore(deadline)) {
+            MealBooking mealBooking = mealBookingRepository.findById(mealId)
+                    .orElseThrow(() -> new RuntimeException("Meal not found"));
+
+            mealBookingRepository.delete(mealBooking);
+        } else {
+            throw new IllegalStateException("Cancellation window has ended.");
+        }
     }
+
 
     public List<MealBooking> getBookingsByUser(Long userId) {
         return mealBookingRepository.findByUserId(userId);

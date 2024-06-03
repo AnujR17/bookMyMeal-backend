@@ -28,7 +28,6 @@ public class NotificationController {
         if (notificationType != null && notificationType.equals("cancellation")) {
             notificationService.createCancellationNotification(notificationDTO.getUserId(), notificationDTO.getUserName(), notificationDTO.getStartDate());
         } else {
-            // Create a booking notification
             notificationService.createNotification(notificationDTO);
         }
         return ResponseEntity.status(HttpStatus.CREATED).build();
