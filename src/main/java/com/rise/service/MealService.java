@@ -19,11 +19,13 @@ public class MealService {
     @Autowired
     private MealBookingRepository mealBookingRepository;
 
-    // Define your holidays here
+    // Defined holidays
     private static final Set<LocalDate> holidays = Set.of(
-            LocalDate.of(2024, 1, 1),  // New Year's Day
-            LocalDate.of(2024, 12, 25) // Christmas
-            // Add more holidays as needed
+            LocalDate.of(2024, 1, 1),
+            LocalDate.of(2024, 12, 25),
+            LocalDate.of(2024, 6, 17),
+            LocalDate.of(2024,8,15)
+
     );
 
     public List<MealBooking> bookMultipleDays(Long userId, LocalDate startDate, LocalDate endDate) {
@@ -31,7 +33,7 @@ public class MealService {
             throw new IllegalArgumentException("Start date and end date must not be null.");
         }
 
-        LocalTime cutoffTime = LocalTime.of(22, 0); // 10 PM cutoff time
+        LocalTime cutoffTime = LocalTime.of(22, 0); // 10 PM deadline time
         LocalDate today = LocalDate.now();
         LocalTime now = LocalTime.now();
 
@@ -47,7 +49,7 @@ public class MealService {
                 MealBooking mealBooking = new MealBooking();
                 mealBooking.setUserId(userId);
                 mealBooking.setDate(date);
-                mealBooking.setToken(UUID.fromString(UUID.randomUUID().toString())); // Generate unique token for each booking
+                mealBooking.setToken(UUID.fromString(UUID.randomUUID().toString())); // Generating unique token for each booking
                 bookedMeals.add(mealBookingRepository.save(mealBooking));
             }
             date = date.plusDays(1);
